@@ -361,25 +361,44 @@ const careers = {
 GET DATA AND MOUNT
 *************************************/
 const careerListings = document.getElementById("career-listings");
-const listingData = JSON.parse(careerListings.getAttribute("data-listings"));
-const categoryData = JSON.parse(careerListings.getAttribute("data-categories"));
 
-new Vue({
-  el: "#career-listings",
-  render: function (createElement) {
-    return createElement(careers, {
-      props: {
-        listings: listingData.map((e, i) => {
-          return {
-            id: i,
-            title: e.title,
-            summary: e.summary,
-            url: e.url,
-            categories: e.categories,
-          };
-        }),
-        categories: categoryData,
+let listingData = [];
+let categoryData = [];
+
+// Fetch category data
+fetch("/json/categorydata.json")
+  .then((response) => response.json())
+  .then((data) => {
+    categoryData = data;
+
+    // Fetch listing data
+    return fetch("/json/listingdata.json");
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    listingData = data;
+
+    // Create Vue instance after fetching data
+    new Vue({
+      el: "#career-listings",
+      render: function (createElement) {
+        return createElement(careers, {
+          props: {
+            listings: listingData.map((e, i) => {
+              return {
+                id: i,
+                title: e.title,
+                summary: e.summary,
+                url: e.url,
+                categories: e.categories,
+              };
+            }),
+            categories: categoryData,
+          },
+        });
       },
     });
-  },
-});
+  })
+  .catch((error) => {
+    console.error("Error fetching data:", error);
+  });
