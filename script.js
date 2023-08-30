@@ -336,7 +336,7 @@ const careers = {
 
   template: `<div class="careers-main">
     <filter-list
-      allText="All Jobs"
+      allText="All Positions"
       v-bind:backdrop="false"
       v-bind:filters="categories"
       v-bind:active-filter="activeCategory"
